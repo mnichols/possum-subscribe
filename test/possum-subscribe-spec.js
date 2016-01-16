@@ -7,7 +7,7 @@ import postal from 'postal'
 test('possum-subscribe-able should subscribe to explicit channel',(assert) => {
 
     let sut = possumSubscribe
-    .props({ channel: 'foo' })
+    .props({ channels: ['foo'] })
     .methods({
         handle: function(inputType, args) {
             this.invoked = inputType
@@ -18,5 +18,95 @@ test('possum-subscribe-able should subscribe to explicit channel',(assert) => {
     postal.publish({ channel: 'foo', topic: 'bar', data: { bat: 'man' } })
     assert.equal(sut.invoked,'bar')
     assert.deepEqual(sut.invokedArgs, { bat: 'man' })
+    assert.end()
+})
+test('possum-subscribe-able should unsubscribe to explicit channel',(assert) => {
+
+    let invocationCount = {}
+    let sut = possumSubscribe
+    .props({
+        channels: ['foo','goo']
+    })
+    .methods({
+        handle: function(inputType, args) {
+            invocationCount[inputType] = (invocationCount[inputType] || 0) + 1
+            this.invoked = inputType
+            this.invokedArgs = args
+        }
+    })
+    .create()
+
+    const publish = () => {
+        postal.publish({ channel: 'foo', topic: 'bar', data: { bat: 'man' } })
+        postal.publish({ channel: 'goo', topic: 'baz', data: { bat: 'man' } })
+    }
+
+    publish()
+    assert.equal(invocationCount['bar'],1)
+    assert.equal(invocationCount['baz'],1)
+    sut.unsubscribe('foo')
+    publish()
+    assert.equal(invocationCount['bar'],1)
+    assert.equal(invocationCount['baz'],2)
+    assert.end()
+})
+test('possum-subscribe-able should unsubscribe to all channels when none listed',(assert) => {
+
+    let invocationCount = {}
+    let sut = possumSubscribe
+    .props({
+        channels: ['foo','goo']
+    })
+    .methods({
+        handle: function(inputType, args) {
+            invocationCount[inputType] = (invocationCount[inputType] || 0) + 1
+            this.invoked = inputType
+            this.invokedArgs = args
+        }
+    })
+    .create()
+
+    const publish = () => {
+        postal.publish({ channel: 'foo', topic: 'bar', data: { bat: 'man' } })
+        postal.publish({ channel: 'goo', topic: 'baz', data: { bat: 'man' } })
+    }
+
+    publish()
+    assert.equal(invocationCount['bar'],1)
+    assert.equal(invocationCount['baz'],1)
+    sut.unsubscribe()
+    publish()
+    assert.equal(invocationCount['bar'],1)
+    assert.equal(invocationCount['baz'],1)
+    assert.end()
+})
+test('possum-subscribe-able should unsubscribe to all channels when `unsubscribe` event is raise',(assert) => {
+
+    let invocationCount = {}
+    let sut = possumSubscribe
+    .props({
+        channels: ['foo','goo']
+    })
+    .methods({
+        handle: function(inputType, args) {
+            invocationCount[inputType] = (invocationCount[inputType] || 0) + 1
+            this.invoked = inputType
+            this.invokedArgs = args
+        }
+    })
+    .create()
+
+    const publish = () => {
+        postal.publish({ channel: 'foo', topic: 'bar', data: { bat: 'man' } })
+        postal.publish({ channel: 'goo', topic: 'baz', data: { bat: 'man' } })
+    }
+
+    publish()
+    assert.equal(invocationCount['bar'],1)
+    assert.equal(invocationCount['baz'],1)
+    postal.publish({ channel: 'foo', topic: 'unsubscribe'})
+    publish()
+    assert.equal(invocationCount['bar'],1)
+    assert.equal(invocationCount['baz'],2)
     assert.end()
 })
