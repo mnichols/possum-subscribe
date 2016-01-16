@@ -1,0 +1,40 @@
+{
+  "name": "possum-subscribe",
+  "version": "0.1.0",
+  "description": "Possum subscribe adapter.",
+  "main": "./dist/possum-subscribe.js",
+  "directories": {
+    "test": "test"
+  },
+  "babel": {
+    "presets": ["node5"]
+  },
+  "scripts": {
+    "clean": "rimraf dist/* && mkdir dist || true",
+    "test": "babel-tape-runner ./test/**/*-spec.js | faucet",
+    "build": "npm run clean && babel src --out-dir dist",
+    "prepublish": "npm run build && npm test"
+  },
+  "keywords": [
+    "possum",
+    "marsupial"
+  ],
+  "author": "Mike Nichols <nichols.mike.s@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mnichols/possum-subscribe"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "postal": "^1.0.7",
+    "stampit": "^2.1.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.4.0",
+    "babel-preset-node5": "^10.3.0",
+    "babel-tape-runner": "^2.0.0",
+    "blue-tape": "^0.1.11",
+    "faucet": "0.0.1",
+    "rimraf": "^2.5.0"
+  }
+}
