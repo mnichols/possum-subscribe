@@ -11,6 +11,10 @@ export default stampit()
         if(env.topic === 'unsubscribe') {
             this.unsubscribe(env.channel)
         }
+        //discriminate other channels in handlers
+        if(this.namespace && env.channel !== this.namespace) {
+            return this.handle(`${env.channel}.${env.topic}`, data);
+        }
         return this.handle(env.topic,data)
     }
     if(this.namespace) {
