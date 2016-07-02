@@ -1,6 +1,6 @@
 {
   "name": "possum-subscribe",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Possum subscribe adapter.",
   "main": "./dist/possum-subscribe.js",
   "directories": {
